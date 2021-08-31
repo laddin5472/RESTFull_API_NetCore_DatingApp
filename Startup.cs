@@ -37,6 +37,7 @@ namespace RESTFull_API_NetCore_DatingApp
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RESTFull_API_NetCore_DatingApp", Version = "v1" });
             });
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +53,8 @@ namespace RESTFull_API_NetCore_DatingApp
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
             app.UseAuthorization();
 
