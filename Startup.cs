@@ -13,6 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RESTFull_API_NetCore_DatingApp.Interfaces;
+using RESTFull_API_NetCore_DatingApp.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using RESTFull_API_NetCore_DatingApp.Extensions;
 
 namespace RESTFull_API_NetCore_DatingApp
 {
@@ -29,32 +35,22 @@ namespace RESTFull_API_NetCore_DatingApp
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddApplicationServices(_config);//extension method defined in the porject
             services.AddControllers();
-            services.AddDbContext<DataContext>(options => {
-                options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
-            });
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RESTFull_API_NetCore_DatingApp", Version = "v1" });
-            });
             services.AddCors();
+            services.AddIdentityServices(_config);//extension method defined in the porject
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RESTFull_API_NetCore_DatingApp v1"));
-            }
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

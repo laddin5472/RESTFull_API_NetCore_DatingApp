@@ -6,12 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RESTFull_API_NetCore_DatingApp.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseApiController
     {
         private readonly DataContext _context;
 
@@ -44,6 +43,8 @@ namespace RESTFull_API_NetCore_DatingApp.Controllers
         //By doing the DB call async we are telling the thread that handles the request
         //to defer it to a Task by launching another thread so the current thread is
         //available for subsequent task without waiting for the task to complete
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
             var users = await _context.Users.ToListAsync();
@@ -51,6 +52,7 @@ namespace RESTFull_API_NetCore_DatingApp.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
